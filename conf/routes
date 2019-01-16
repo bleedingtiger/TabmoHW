@@ -7,7 +7,8 @@
 GET     /                                   controllers.HomeController.index
 GET     /explore                            controllers.HomeController.explore
 GET     /tutorial                           controllers.HomeController.tutorial
-GET     /api/:repoName/:repoOwner/commits   controllers.Api.getTopCommiters(repoName, repoOwner)
+GET     /api/:repoOwner/:repoName/commits   controllers.Api.getTopCommiters(repoOwner, repoName)
+GET     /api/:userName/languages            controllers.Api.getTopLanguages(userName)
 
 
 # Map static resources from the /public folder to the /assets URL path
