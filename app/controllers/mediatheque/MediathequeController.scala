@@ -1,10 +1,12 @@
 package controllers.mediatheque
 
 import javax.inject.{Inject, Singleton}
-import play.api.libs.json.Json
+import models.Movie
 import play.api.libs.ws.WSClient
+import play.api.libs.json._
 import play.api.mvc.{AbstractController, Action, AnyContent, ControllerComponents}
 
+import scala.collection.immutable.ListMap
 import scala.concurrent.{ExecutionContext, Future}
 
 /**
@@ -19,18 +21,42 @@ class MediathequeController @Inject()(cc: ControllerComponents,
 
   implicit val execCont: ExecutionContext = ec
 
-  def list(): Action[AnyContent] = Action.async {
-    val listFilms = mediathequeResHandler.list()
-    listFilms.map{
-      res => {
-        Ok(Json.toJson(res))
+  def create(): Action[JsValue] = Action(parse.json) {
+    request => {
+      request.body.validate[Movie].map {
+        m => {
+          mediathequeResHandler.create(m)
+          Ok("New movie " + m.title + " (" + m.year + ") successfully created !")
+        }
+      }.recoverTotal {
+        e => BadRequest("Error: " + JsError.toJson(e))
       }
     }
   }
 
-  def create(): Action[AnyContent] = ???
+  def list(genre: Option[String]): Action[AnyContent] = Action.async {
+    val movieList = mediathequeResHandler.list()
+    movieList.map {
+      m => {
+        genre match {
+          case Some(g) =>
+            val mList = m.toList.filter(_.genre.contains(g)).sortBy(m => (-m.year, m.title))
+            Ok(Json.toJson(mList))
+          case None =>
+            val mList = m.toList.sortBy(m => (-m.year, m.title))
+            Ok(Json.toJson(mList))
+        }
+      }
+    }
+  }
 
-  def find(genre: String): Action[AnyContent] = ???
-
-  def group(): Action[AnyContent] = ???
+  def groupByYear(): Action[AnyContent] = Action.async {
+    val movieList = mediathequeResHandler.list()
+    movieList.map {
+      m => {
+        val mList = ListMap(m.toList.groupBy(m => m.year).mapValues(_.size).toSeq.sortBy(-_._1):_*)
+        Ok(Json.toJson(mList))
+      }
+    }
+  }
 }

@@ -111,7 +111,7 @@ class GithubController @Inject()(cc: ControllerComponents, ws: WSClient, ec: Exe
       }
     }*/
 
-
+    // TODO : Make this Future.sequence works correctly
     /*val futureList: Future[List[WSResponse]] =
     for {
       repoName <- futureRepoNameList
