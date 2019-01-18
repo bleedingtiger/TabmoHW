@@ -1,11 +1,11 @@
-package controllers
+package controllers.github
 
-import Utilities.DateUtil
 import javax.inject.{Inject, Singleton}
 import play.api.Configuration
+import play.api.libs.json._
 import play.api.libs.ws.{WSClient, WSResponse}
 import play.api.mvc._
-import play.api.libs.json._
+import utils.DateUtil
 
 import scala.collection.immutable.ListMap
 import scala.concurrent.{ExecutionContext, Future}
@@ -13,10 +13,10 @@ import scala.language.postfixOps
 
 /**
   * This controller creates an `Action` to handle HTTP requests to the
-  * application's API.
+  * application's API for Github.
   */
 @Singleton
-class Api @Inject()(cc: ControllerComponents, ws: WSClient, ec: ExecutionContext, config: Configuration) extends AbstractController(cc) {
+class GithubController @Inject()(cc: ControllerComponents, ws: WSClient, ec: ExecutionContext, config: Configuration) extends AbstractController(cc) {
 
   implicit val execCont: ExecutionContext = ec
 

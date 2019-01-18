@@ -4,12 +4,18 @@
 # ~~~~
 
 # An example controller showing a sample home page
-GET     /                                   controllers.HomeController.index
-GET     /explore                            controllers.HomeController.explore
-GET     /tutorial                           controllers.HomeController.tutorial
-GET     /api/:repoOwner/:repoName/commits   controllers.Api.getTopCommiters(repoOwner, repoName)
-GET     /api/:userName/languages            controllers.Api.getTopLanguages(userName)
-GET     /api/:repoOwner/:repoName/issues    controllers.Api.getIssues(repoOwner, repoName)
+GET     /                                               controllers.HomeController.index
+
+# Mediatheque controller
+POST    /api/mediatheque/films                          controllers.mediatheque.MediathequeController.create()
+GET     /api/mediatheque/films                          controllers.mediatheque.MediathequeController.list()
+GET     /api/mediatheque/films?genre=:genre             controllers.mediatheque.MediathequeController.find(genre)
+GET     /api/mediatheque/films/groupByYear              controllers.mediatheque.MediathequeController.group()
+
+# Github requests controller
+GET     /api/github/repos/:repoOwner/:repoName/commits  controllers.github.GithubController.getTopCommiters(repoOwner, repoName)
+GET     /api/github/users/:userName/languages           controllers.github.GithubController.getTopLanguages(userName)
+GET     /api/github/repos/:repoOwner/:repoName/issues   controllers.github.GithubController.getIssues(repoOwner, repoName)
 
 
 # Map static resources from the /public folder to the /assets URL path
