@@ -2,7 +2,7 @@ package utils
 
 import java.text.SimpleDateFormat
 import java.time.LocalDate
-import java.util.{Calendar, Date}
+import java.util.Calendar
 
 object DateUtil {
   val dateFormat = new SimpleDateFormat("yyyy-MM-dd")
@@ -25,7 +25,7 @@ object DateUtil {
 
   def datesMapWithZeros(startDate: String, days: Int): Map[String, Int] = {
     (for {
-      i <- 0 to days
+      i <- 0 until days
       d = {
         calendar.setTime(dateFormat.parse(startDate))
         calendar.add(Calendar.DATE, i)
@@ -38,7 +38,7 @@ object DateUtil {
     * Fills a map of dates with zeros where there are holes, between a start date and a duration in days
     * @param dateMap Map[String, Int] of string dates containing holes
     * @param startDate  Starting date
-    * @param days Number of days to go from the starting date
+    * @param days Number of days to go from the starting date, positive
     */
   def fillDatesMapWithZeros(dateMap: Map[String, Int], startDate: String, days: Int): Map[String, Int] = {
     val zerosMap = datesMapWithZeros(startDate, days)
