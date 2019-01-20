@@ -54,7 +54,7 @@ class MediathequeController @Inject()(cc: ControllerComponents,
     val movieList = mediathequeResHandler.list()
     movieList.map {
       m => {
-        val mList = ListMap(m.toList.groupBy(m => m.year).mapValues(_.size).toSeq.sortBy(-_._1):_*)
+        val mList = ListMap(m.toList.groupBy(m => m.year).mapValues(_.size).toSeq.sortBy(-_._1): _*)
         Ok(Json.toJson(mList))
       }
     }
