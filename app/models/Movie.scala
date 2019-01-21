@@ -4,6 +4,7 @@ import play.api.libs.json._
 import play.api.libs.json.Reads._
 import play.api.libs.functional.syntax._
 
+// TODO : Save the ranking note as a Short to save memory and avoid Float lack of precision
 case class Movie(
                   title: String,
                   country: String,
@@ -44,6 +45,7 @@ object Movie {
 
   def validCountry(country: String): Boolean = country.matches("""[A-Z]{3}""")
 
+  // TODO : Use custom validators
   implicit val implicitReads: Reads[Movie] = (
     (JsPath \ 'title).read[String](maxLength[String](250)) and
       (JsPath \ 'country).read[String](minLength[String](3) keepAnd maxLength[String](3)) and

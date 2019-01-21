@@ -6,6 +6,9 @@ import models.Movie
 import scala.collection.mutable.ListBuffer
 import scala.concurrent.{ExecutionContext, Future}
 
+/**
+  * This singleton keep and manages the movie's data
+  */
 @Singleton
 class MediathequeResourceHandler @Inject()()(implicit ec: ExecutionContext) {
 
@@ -19,12 +22,18 @@ class MediathequeResourceHandler @Inject()()(implicit ec: ExecutionContext) {
     Movie("Back to the movie", "FRA", 2019, None, None, None, List("SF"), 8)
   )
 
+  /**
+    * Return all saved movies
+    */
   def list(): Future[ListBuffer[Movie]] = {
     Future {
       movies
     }
   }
 
+  /**
+    * Add a new movie to the list
+    */
   def create(movie: Movie): Unit = {
     movies += movie
   }

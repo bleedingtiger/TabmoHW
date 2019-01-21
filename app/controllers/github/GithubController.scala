@@ -15,7 +15,7 @@ import scala.language.postfixOps
 
 /**
   * This controller creates an `Action` to handle HTTP requests to the
-  * application's API for Github.
+  * application's API for Epic 2.
   */
 @Singleton
 class GithubController @Inject()(
@@ -28,6 +28,9 @@ class GithubController @Inject()(
   implicit val execCont: ExecutionContext = ec
 
 
+  /**
+    * US 2-1 : Return top 10 commiters of a specific Github project
+    */
   def getTopCommiters(repoOwner: String, repoName: String): Action[AnyContent] = Action.async {
 
     val futureTopCommiters: Future[WSResponse] = githubResourceHandler.topCommiters(repoOwner, repoName)
@@ -43,6 +46,9 @@ class GithubController @Inject()(
   }
 
 
+  /**
+    * US 2-2 : Return top 10 languages used by a specific Github user based on its different projects
+    */
   def getTopLanguages(userName: String): Action[AnyContent] = Action.async {
 
     val futureRepoNames: Future[WSResponse] = githubResourceHandler.userRepos(userName)
@@ -81,6 +87,7 @@ class GithubController @Inject()(
           m
         })
 
+        // TODO : do it simpler by summing languages data directly in a Map
         // Create a map containing only redundant languages to sum them
         val mapOfMerged = langList.reduce((m1, m2) => {
           m1.flatMap { case (l, n) =>
@@ -100,6 +107,9 @@ class GithubController @Inject()(
   }
 
 
+  /**
+    * US 2-3 : Return a map of the number of issues for the past 30 days of a specific Github project
+    */
   def getIssues(repoOwner: String, repoName: String): Action[AnyContent] = Action.async {
     val dayHistorySize = 30
     val issuesMinDate = DateUtil.addDaysToDate(DateUtil.currentDate(), -dayHistorySize)

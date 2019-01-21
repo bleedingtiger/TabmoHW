@@ -11,7 +11,7 @@ import scala.concurrent.ExecutionContext
 
 /**
   * This controller creates an `Action` to handle HTTP requests to the
-  * application's API for the Mediatheque.
+  * application's API for the Epic 1.
   */
 @Singleton
 class MediathequeController @Inject()(cc: ControllerComponents,
@@ -21,6 +21,10 @@ class MediathequeController @Inject()(cc: ControllerComponents,
 
   implicit val execCont: ExecutionContext = ec
 
+  /**
+    * US 1-1 : Tries to create a new movie be reading POST data as JSON
+    * @return Message of success or message describing the error
+    */
   def create(): Action[JsValue] = Action(parse.json) {
     request => {
       request.body.validate[Movie].map {
@@ -34,6 +38,11 @@ class MediathequeController @Inject()(cc: ControllerComponents,
     }
   }
 
+  /**
+    * US 1-2 : Lists all movies of a specific genre if an argument is passed, otherwise lists all movies
+    * @param genre String representing the genre to filter
+    * @return
+    */
   def list(genre: Option[String]): Action[AnyContent] = Action.async {
     val movieList = mediathequeResHandler.list()
     movieList.map {
@@ -50,6 +59,10 @@ class MediathequeController @Inject()(cc: ControllerComponents,
     }
   }
 
+  /**
+    * US 1-3 : Group movies by year of production and count them
+    * @return a list of years with the number of movies associated, as JSON data
+    */
   def groupByYear(): Action[AnyContent] = Action.async {
     val movieList = mediathequeResHandler.list()
     movieList.map {
