@@ -6,6 +6,7 @@ import java.util.Calendar
 
 object DateUtil {
   val dateFormat = new SimpleDateFormat("yyyy-MM-dd")
+  val movieDateRegex = """([12]\d{3}/(0[1-9]|1[0-2])/(0[1-9]|[12]\d|3[01]))"""
   val githubDateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'")
   val calendar: Calendar = Calendar.getInstance
 
@@ -25,6 +26,7 @@ object DateUtil {
 
   /**
     * Add days to a date
+    *
     * @param date base date
     * @param days number of days to add to the base date
     * @return a date, "days" day(s) in the futur if "days">0, in the past if "days"<0, or the same date if "days"==0
@@ -46,20 +48,21 @@ object DateUtil {
         calendar.add(Calendar.DATE, i)
         dateFormat.format(calendar.getTime)
       }
-    } yield d -> 0)(collection.breakOut[Any, (String, Int), Map[String, Int]])
+    } yield d -> 0) (collection.breakOut[Any, (String, Int), Map[String, Int]])
   }
 
   /**
     * Fills a map of dates with zeros where there are holes, between a start date and a duration in days
-    * @param dateMap Map[String, Int] of string dates containing holes
-    * @param startDate  Starting date
-    * @param days Number of days to go from the starting date, positive
+    *
+    * @param dateMap   Map[String, Int] of string dates containing holes
+    * @param startDate Starting date
+    * @param days      Number of days to go from the starting date, positive
     */
   def fillDatesMapWithZeros(dateMap: Map[String, Int], startDate: String, days: Int): Map[String, Int] = {
     val zerosMap = datesMapWithZeros(startDate, days)
     zerosMap.map {
       case (d, c) => (d, {
-        if(dateMap.contains(d)) dateMap(d) + c else c
+        if (dateMap.contains(d)) dateMap(d) + c else c
       })
     }
   }

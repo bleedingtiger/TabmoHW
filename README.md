@@ -35,13 +35,13 @@ containing JSON of the form :
 **Minimal fields** :
 
 ```
-{"title": "Movie title", "country": "FRA", "year": 2000, "genre": ["Genre"], "ranking": 5}
+{"title": "Movie title", "country": "FRA", "year": 2000, "genre": ["genre"], "ranking": 5}
 ```
 
 **All possible fields** :
 
 ```
-{"title": "Movie title", "country": "FRA", "year": 2000, "original_title": "Original title", "french_release": "YYYY/MM/DD", "synopsis": "Synopsis", "genre": ["Genre"], "ranking": 5}
+{"title": "Movie title", "country": "FRA", "year": 2000, "original_title": "Original title", "french_release": "2000/01/01", "synopsis": "Synopsis", "genre": ["genre"], "ranking": 5}
 ```
 
 To help you, the project contains a file with a JSON to add a simple movie, located at _/public/json/movie.json_ that you can send to the API using this command :
@@ -52,7 +52,7 @@ curl localhost:9000/api/mediatheque/movies -H "Content-type:application/json" -X
 
 **Note** : Some improvements must be done for this User Story, like adding custom Validators.
 
-**US 1-2** : <http://localhost:9000/api/mediatheque/movies?genre=SF>
+**US 1-2** : <http://localhost:9000/api/mediatheque/movies?genre=sf>
 
 **US 1-3** : <http://localhost:9000/api/mediatheque/movies/groupByYear>
 

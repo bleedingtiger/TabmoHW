@@ -13,13 +13,13 @@ import scala.concurrent.{ExecutionContext, Future}
 class MediathequeResourceHandler @Inject()()(implicit ec: ExecutionContext) {
 
   val movies: ListBuffer[Movie] = ListBuffer(
-    Movie("The first movie", "PYF", 2019, None, None, None, List("Animation"), 5),
-    Movie("The movie", "FRA", 2011, None, None, None, List("SF"), 7.6f),
-    Movie("Lord of the movie", "NZL", 2001, Some("Seigneur du film"), Some("2001-12-19"), Some(
-      """
-        |In the Second Age of Middle-earth, the lords of Elves, Dwarves, and Men are given Films of Power...
-      """.stripMargin), List("Fantasy", "SF"), 8.8f),
-    Movie("Back to the movie", "FRA", 2019, None, None, None, List("SF"), 8)
+    Movie("Le premier film", "PYF", 2019, Some("The first movie"), None, None, List("animation"), 5),
+    Movie("The movie", "FRA", 2011, None, None, None, List("sf"), 7.6f),
+    Movie("Seigneur du film", "NZL", 2001, Some("Lord of the movie"), Some("2001/12/19"), Some(
+        """
+          |In the Second Age of Middle-earth, the lords of Elves, Dwarves, and Men are given Films of Power...
+        """.stripMargin), List("fantasy", "sf"), 8.8f),
+    Movie("Retour vers le film", "FRA", 2019, None, None, None, List("sf"), 8)
   )
 
   /**

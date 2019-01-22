@@ -3,8 +3,8 @@ package models
 import play.api.libs.json._
 import play.api.libs.json.Reads._
 import play.api.libs.functional.syntax._
+import utils.DateUtil
 
-// TODO : Save the ranking note as a Short to save memory and avoid Float lack of precision
 case class Movie(
                   title: String,
                   country: String,
@@ -40,20 +40,26 @@ object Movie {
       }
     },
     "genre" -> Json.toJson(film.genre),
-    "ranking" -> film.ranking,
+    "ranking" -> film.ranking // Precision error here due to Float, cast to string can solve it if required
   )
 
-  def validCountry(country: String): Boolean = country.matches("""[A-Z]{3}""")
-
-  // TODO : Use custom validators
   implicit val implicitReads: Reads[Movie] = (
-    (JsPath \ 'title).read[String](maxLength[String](250)) and
-      (JsPath \ 'country).read[String](minLength[String](3) keepAnd maxLength[String](3)) and
-      (JsPath \ 'year).read[Int](min(1800) keepAnd max(3000)) and
-      (JsPath \ 'original_title).formatNullable[String] and
-      (JsPath \ 'french_release).formatNullable[String] and
-      (JsPath \ 'synopsis).formatNullable[String] and
-      (JsPath \ 'genre).read[List[String]] and
-      (JsPath \ 'ranking).read[Float]
+    (JsPath \ 'title).read[String](minLength[String](1) keepAnd maxLength[String](250)) and
+      (JsPath \ 'country).read[String].filter(JsonValidationError("must valid the format ISO 3166-1 alpha-3"))(c => c.matches("""[A-Z]{3}""")) and
+      (JsPath \ 'year).read[Int](min(1800) keepAnd max(9999)) and
+      (JsPath \ 'original_title).readNullable[String](minLength[String](1) keepAnd maxLength[String](250)) and
+      (JsPath \ 'french_release).readNullable[String].filter(JsonValidationError("must valid the format yyyy/MM/dd")) {
+        case Some(a) => a.matches(DateUtil.movieDateRegex)
+        case None => true
+      } and
+      (JsPath \ 'synopsis).readNullable[String](maxLength[String](9999)) and
+      (JsPath \ 'genre).read[List[String]]
+        .filter(JsonValidationError("a movie must have at least 1 genre"))(c => c.nonEmpty)
+        .filter(JsonValidationError("every genre must be between 1 and 50 char. max."))(c => {
+          c.map(s => s.length > 0 && s.length <= 50).reduce((a, b) => a && b)
+        }) and
+      (JsPath \ 'ranking).read[Float](min(0.0f) keepAnd max(10.0f)).filter(JsonValidationError("must be incremented by 0.1"))
+      (r => (r * 1000).round % 100 == 0) // Allow some imprecision to counter float/double lack of precision
     ) (Movie.apply _)
 }
+

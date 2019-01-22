@@ -22,15 +22,21 @@ class MediathequeController @Inject()(cc: ControllerComponents,
   implicit val execCont: ExecutionContext = ec
 
   /**
-    * US 1-1 : Tries to create a new movie be reading POST data as JSON
+    * US 1-1 : Tries to create a new movie by reading POST data as JSON
     * @return Message of success or message describing the error
     */
   def create(): Action[JsValue] = Action(parse.json) {
     request => {
       request.body.validate[Movie].map {
         m => {
-          mediathequeResHandler.create(m)
-          Ok("New movie " + m.title + " (" + m.year + ") successfully created !")
+          if(m.country != "FRA" && m.original_title.isEmpty)
+            BadRequest("Error: you must specify 'original_title' if country is not 'FRA'.")
+          else {
+            val genres = m.genre.map(g => g.toLowerCase)
+            val movie = Movie(m.title, m.country, m.year, m.original_title, m.french_release, m.synopsis, genres, m.ranking)
+            mediathequeResHandler.create(movie)
+            Ok("New movie " + m.title + " (" + m.year + ") successfully created !")
+          }
         }
       }.recoverTotal {
         e => BadRequest("Error: " + JsError.toJson(e))
