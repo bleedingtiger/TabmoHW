@@ -87,21 +87,12 @@ class GithubController @Inject()(
           m
         })
 
-        // TODO : do it simpler by summing languages data directly in a Map
-        // Create a map containing only redundant languages to sum them
-        val mapOfMerged = langList.reduce((m1, m2) => {
-          m1.flatMap { case (l, n) =>
-            m2.get(l).map(m => Map((l, n + m))).getOrElse(Map.empty[String, Long])
-          }
-        })
+        val langSumMap = langList.flatten.groupBy(a => a._1).map {
+          case (_, list) => list.reduce((a, b) => (a._1, a._2 + b._2))
+        }
+        val finalLanguagesList = langSumMap.toList.sortBy(_._2).reverse.take(10)
 
-        val listOfAll = langList.flatMap(a => a.toList)
-        // Create a map of non-redundant languages
-        val mapOfAllExcludeMerged = listOfAll.filter(a => !mapOfMerged.contains(a._1)).toMap
-        // Merge it with the map containing only summed languages, then sort and take the top 10
-        val mapMerged = (mapOfMerged ++ mapOfAllExcludeMerged).toList.sortBy(_._2).reverse.take(10)
-
-        Ok(Json.toJson(mapMerged))
+        Ok(Json.toJson(finalLanguagesList))
       }
     }
   }

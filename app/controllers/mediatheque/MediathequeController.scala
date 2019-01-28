@@ -29,6 +29,7 @@ class MediathequeController @Inject()(cc: ControllerComponents,
     request => {
       request.body.validate[Movie].map {
         m => {
+          // TODO : move this validation to the Reads[Movie]
           if(m.country != "FRA" && m.original_title.isEmpty)
             BadRequest("Error: you must specify 'original_title' if country is not 'FRA'.")
           else {
@@ -49,6 +50,7 @@ class MediathequeController @Inject()(cc: ControllerComponents,
     * @param genre String representing the genre to filter
     * @return
     */
+  // TODO : keep movies sorted by year in the model to avoid sorting them in every request
   def list(genre: Option[String]): Action[AnyContent] = Action.async {
     val movieList = mediathequeResHandler.list()
     movieList.map {
@@ -73,7 +75,7 @@ class MediathequeController @Inject()(cc: ControllerComponents,
     val movieList = mediathequeResHandler.list()
     movieList.map {
       m => {
-        val mList = ListMap(m.toList.groupBy(m => m.year).mapValues(_.size).toSeq.sortBy(-_._1): _*)
+        val mList = ListMap(m.groupBy(_.year).mapValues(_.size).toSeq.sortBy(-_._1): _*)
         Ok(Json.toJson(mList))
       }
     }
